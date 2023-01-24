@@ -141,7 +141,7 @@ class Game(object):
             if value != "M" and value != cell_num**2-1:
                 if (x, y) not in self.showed_list or (x, y) in self.secured_coordinate:
                     self.showed_list.append((x, y))
-                    if self.mine_coordinate[y][x] == "홀" or self.mine_coordinate[y][x] == "짝":
+                    if self.mine_coordinate[y][x] == "odd" or self.mine_coordinate[y][x] == "even":
                         msg = self.mine_coordinate[y][x]
                         print_text(self.font2, self.screen, msg, pink,\
                                     (margin + cell_size//2 + cell_size*x, margin + cell_size//2 + cell_size*y))
@@ -258,8 +258,8 @@ class Game(object):
                 for i in range(cell_num**2):
                     if random.random() > 0.95:
                         if self.mine_coordinate[i//cell_num][i%cell_num] == 0:
-                            if self.coordinate[i//cell_num][i%cell_num] % 2 == 0: self.mine_coordinate[i//cell_num][i%cell_num] = "짝"
-                            else: self.mine_coordinate[i//cell_num][i%cell_num] = "홀"
+                            if self.coordinate[i//cell_num][i%cell_num] % 2 == 0: self.mine_coordinate[i//cell_num][i%cell_num] = "even"
+                            else: self.mine_coordinate[i//cell_num][i%cell_num] = "odd"
                             count += 1
 
     def search_blocks(self):
