@@ -27,7 +27,7 @@ clock = pg.time.Clock()
 def main():
     pg.init()
     screen = pg.display.set_mode(screen_size)
-    pg.display.set_caption("지뢰피하기")
+    pg.display.set_caption("minesweeper")
 
     game = Game(screen)
     button = Button(screen, game)
@@ -68,8 +68,8 @@ def print_text(font, screen, msg, color, pos):
 class Game(object):
     def __init__(self, screen):
         self.screen = screen
-        self.font = pg.font.SysFont("Times New Roman", margin*3//10)
-        self.font2 = pg.font.SysFont("새굴림", margin*3//10)
+        self.font = pg.font.SysFont("Arial", margin*3//10)
+        self.font2 = pg.font.SysFont("Times New Roman", margin*3//10)
 
     def init_game(self, level):
         self.coordinate = [[0 for y in range(cell_num)] for x in range(cell_num)]
@@ -118,21 +118,21 @@ class Game(object):
 
     def show_numbers(self):
         for x, y in self.secured_coordinate:
-            if y > 0 and (x, y-1) not in self.show_list: # 상
+            if y > 0 and (x, y-1) not in self.show_list: # up
                 self.show_list.append((x, y-1))
-            if y < cell_num-1 and (x, y+1) not in self.show_list: # 하
+            if y < cell_num-1 and (x, y+1) not in self.show_list: # down
                 self.show_list.append((x, y+1))
-            if x > 0 and (x-1, y) not in self.show_list: # 좌
+            if x > 0 and (x-1, y) not in self.show_list: # left
                 self.show_list.append((x-1, y))
-            if x < cell_num-1 and (x+1, y) not in self.show_list: # 우
+            if x < cell_num-1 and (x+1, y) not in self.show_list: # right
                 self.show_list.append((x+1, y))
-            if x > 0 and y > 0 and (x-1, y-1) not in self.show_list: # 좌상
+            if x > 0 and y > 0 and (x-1, y-1) not in self.show_list: # top left
                 self.show_list.append((x-1, y-1))
-            if x > 0 and y < cell_num-1 and (x-1, y+1) not in self.show_list: # 좌하
+            if x > 0 and y < cell_num-1 and (x-1, y+1) not in self.show_list: # bottom left
                 self.show_list.append((x-1, y+1))
-            if x < cell_num-1 and y > 0 and (x+1, y-1) not in self.show_list: # 우상
+            if x < cell_num-1 and y > 0 and (x+1, y-1) not in self.show_list: # up right
                 self.show_list.append((x+1, y-1))
-            if x < cell_num-1 and y < cell_num-1 and (x+1, y+1) not in self.show_list: # 우하
+            if x < cell_num-1 and y < cell_num-1 and (x+1, y+1) not in self.show_list: # down right
                 self.show_list.append((x+1, y+1))
 
         for x, y in self.show_list:
@@ -170,7 +170,7 @@ class Game(object):
                                     (cell_size*3)//4, (cell_size*3)//4])
 
     def secure_cell(self):
-        if self.mine_coordinate[self.current_coordinate[1]][self.current_coordinate[0]] == "M": # 지뢰칸을 밟았는지 먼저 검사
+        if self.mine_coordinate[self.current_coordinate[1]][self.current_coordinate[0]] == "M": # checks if bomb is detected
             bomb_img = pg.image.load("bomb.png")
             bomb = pg.transform.scale(bomb_img, (cell_size, cell_size))
             for x in range(cell_num):
@@ -221,25 +221,25 @@ class Game(object):
             mine_Y = mine//cell_num
             self.mine_coordinate[mine_Y][mine_X] = "M"
 
-            self.coordinate[mine_Y][mine_X] += 1 # 지뢰가 있는 칸
-            if mine_Y > 0: # 상
+            self.coordinate[mine_Y][mine_X] += 1 # space with bomb
+            if mine_Y > 0: # up
                 self.coordinate[mine_Y - 1][mine_X] += 1
-            if mine_Y < cell_num-1: # 하
+            if mine_Y < cell_num-1: # down
                 self.coordinate[mine_Y + 1][mine_X] += 1
-            if mine_X > 0: # 좌
+            if mine_X > 0: # left
                 self.coordinate[mine_Y][mine_X - 1] += 1
-            if mine_X < cell_num-1: # 우
+            if mine_X < cell_num-1: # right
                 self.coordinate[mine_Y][mine_X + 1] += 1
-            if mine_Y > 0 and mine_X > 0: # 좌상
+            if mine_Y > 0 and mine_X > 0: # up left
                 self.coordinate[mine_Y - 1][mine_X - 1] += 1
-            if mine_Y < cell_num-1 and mine_X > 0: # 좌하
+            if mine_Y < cell_num-1 and mine_X > 0: # down left
                 self.coordinate[mine_Y + 1][mine_X - 1] += 1
-            if mine_Y > 0 and mine_X < cell_num-1: # 우상
+            if mine_Y > 0 and mine_X < cell_num-1: # up right
                 self.coordinate[mine_Y - 1][mine_X + 1] += 1
-            if mine_Y < cell_num-1 and mine_X < cell_num-1: # 우하
+            if mine_Y < cell_num-1 and mine_X < cell_num-1: # down right
                 self.coordinate[mine_Y + 1][mine_X + 1] += 1
 
-        for i in range(5): # 3칸 이상의 갈 수 없는 인접한 블록을 찾아 갈 수 있도록 연결
+        for i in range(5): 
             self.block_list = {}
             self.search_blocks()
 
@@ -249,8 +249,8 @@ class Game(object):
                     for cell in deleted_cells:
                         self.mine_coordinate[cell//cell_num][cell%cell_num] = 0
         
-        self.delete_9nines_blocks() # 지뢰매설량이 9인 칸이 있을 경우 자신 포함 주변 9칸 중 한 칸의 지뢰 제거
-        self.reduce_zeros(level) # easy/normal의 경우 지뢰매설량 0인 칸 하나에 지뢰 추가, hard/lunatic의 경우 지뢰매설량이 0인 칸이 없을 때까지 지뢰 추가
+        self.delete_9nines_blocks() 
+        self.reduce_zeros(level)
 
         if level == "lunatic":
             count = 0
@@ -404,8 +404,8 @@ class Game(object):
 class Button(object):
     def __init__(self, screen, game):
         self.screen = screen
-        self.font = pg.font.SysFont("Times New Roman", margin*3//10)
-        self.font2 = pg.font.SysFont("새굴림", margin*3//10)
+        self.font = pg.font.SysFont("Arial", margin*3//10)
+        self.font2 = pg.font.SysFont("Times New Roman", margin*3//10)
         self.game = game
         self.draw_buttons()
 
